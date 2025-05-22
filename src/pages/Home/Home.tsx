@@ -1,0 +1,31 @@
+import React from 'react'
+import type { Product } from '../../types/types'
+import { useEffect, useState } from 'react' // fetching is a 'side-effect' so best to use use useEffect for this
+import ProductCard from '../../components/ProductCard/ProductCard'
+import './Home.css'
+
+const Home:React.FC = () => {
+    const [products, setProducts] = useState<Product[]>([]); //since we are using typescript we need to define the type of the state, which is the <Product[]> type, an empty array of products
+
+    useEffect(() => {
+        const fetchProducts = async() => {
+            const response = await fetch('https://fakestoreapi.com/products');
+            //console.log(response); //this is a test to see what is inside the response
+            const data = await response.json(); //this will convert the response to json data
+            //console.log(data); //testing to see the actual data, is an array of 20 products
+            setProducts(data); //this sets the products array state to the data we received
+        }
+        fetchProducts();
+    }, []) //the empty array means this will only run once when the component mounts
+
+  return (
+    <div className="container">
+      {products.map((product: Product) => (
+        <ProductCard product={product} />
+        //we are passing the product as a prop to the ProductCard component
+      ))}
+    </div>
+  )
+}
+
+export default Home
