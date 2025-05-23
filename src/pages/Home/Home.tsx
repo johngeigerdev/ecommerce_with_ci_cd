@@ -3,20 +3,24 @@ import type { Product } from '../../types/types'
 import { useEffect, useState } from 'react' // fetching is a 'side-effect' so best to use use useEffect for this
 import ProductCard from '../../components/ProductCard/ProductCard'
 import './Home.css'
+import { useProductContext } from '../../context/ProductContext' //this is the context that will be used in the whole app, by importing it here, we get access to the context and data
+
 
 const Home:React.FC = () => {
-    const [products, setProducts] = useState<Product[]>([]); //since we are using typescript we need to define the type of the state, which is the <Product[]> type, an empty array of products
+  // const [products, setProducts] = useState<Product[]>([]); //since we are using typescript we need to define the type of the state, which is the <Product[]> type, an empty array of products
+  const { products, selectedCategory, dispatch } = useProductContext(); //we have access to products, selectedCategory and dispatch b/c we imported the useProductContext
 
-    useEffect(() => {
-        const fetchProducts = async() => {
-            const response = await fetch('https://fakestoreapi.com/products');
-            //console.log(response); //this is a test to see what is inside the response
-            const data = await response.json(); //this will convert the response to json data
-            //console.log(data); //testing to see the actual data, is an array of 20 products
-            setProducts(data); //this sets the products array state to the data we received
-        }
-        fetchProducts();
-    }, []) //the empty array means this will only run once when the component mounts
+  useEffect(() => {
+      const fetchProducts = async() => {
+          const response = await fetch('https://fakestoreapi.com/products');
+          //console.log(response); //this is a test to see what is inside the response
+          const data = await response.json(); //this will convert the response to json data
+          // setProducts(data); //this sets the products array state to the data we received
+          dispatch({ type: 'SET_PRODUCTS', payload: data})
+          //console.log(data); //testing to see the actual data, is an array of 20 products
+        };
+      fetchProducts();
+  }, [dispatch]); //the empty array means this will only run once when the component mounts
 
   return (
     <div className="container">
