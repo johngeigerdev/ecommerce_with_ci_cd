@@ -41,7 +41,7 @@ const Home:React.FC = () => {
   return (
     <div className="container">
       {products.map((product: Product) => (
-        <ProductCard product={product} />
+        <ProductCard product={product} key={product.id} />
         //we are passing the product as a prop to the ProductCard component
       ))}
     </div>
