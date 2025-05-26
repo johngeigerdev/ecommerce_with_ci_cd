@@ -7,4 +7,4 @@ const apiClient = axios.create({
 })
 
 export const fetchProducts = (): Promise<AxiosResponse<Product[]>> => apiClient.get<Product[]>('/products')  //could do this just using fetch instead of axios
-export const fetchCategories = (id: number): Promise<AxiosResponse<Category[]>> => apiClient.get<Category[]>(`/products/categories`) //could do this just using fetch instead of axios
+export const fetchCategories = (): Promise<AxiosResponse<Category[]>> => apiClient.get<Category[]>('/products/categories') //this will fetch the categories from the api

@@ -1,6 +1,8 @@
+.home-container {
+    background-color: teal
+}
 .container {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    background-color: #00b894;
 }
