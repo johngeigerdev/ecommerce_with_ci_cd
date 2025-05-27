@@ -1,78 +1,60 @@
 import React from 'react';
-import type { Product, Category } from '../../types/types';
-import { useEffect } from 'react'; // fetching is a 'side-effect' so best to use use useEffect for this
 import ProductCard from '../../components/ProductCard/ProductCard';
 import './Home.css';
-import { useProductContext } from '../../context/ProductContext'; //this is the context that will be used in the whole app, by importing it here, we get access to the context and data
 import { useQuery } from '@tanstack/react-query';
-import { fetchProducts, fetchCategories } from '../../api/api'; //this is the api that will be used to fetch the products
-
-const Home:React.FC = () => {
-  // const [products, setProducts] = useState<Product[]>([]); //since we are using typescript we need to define the type of the state, which is the <Product[]> type, an empty array of products
-  const { products, selectedCategory, dispatch } = useProductContext(); //we have access to products, selectedCategory and dispatch b/c we imported the useProductContext
-
+import { fetchProducts, fetchProductsByCategory } from '../../api/api'; //this is the api that will be used to fetch the products
+import { useSelector } from 'react-redux'; //this is used to access the state in the redux store, we will use this to get the products and selected category from the store
+import type { RootState } from '../../store/store'; //this is the root state of the redux store, we will use this to get the products and selected category from the store
+import type { Product } from './../../types/types'; //this is the type for the product, using this to type the products that we get from the api
+import { Container, Row, Col } from 'react-bootstrap';
 
 //can do this with react-query instead of useEffect, it's much less code and easier to read
-  const { data: productsData } = useQuery({
-    queryKey: ['products'],
-    queryFn: fetchProducts,
-  });
-  //console.log(data);
 
-  useEffect(() => {
-    if (productsData) {
-      dispatch ({ type: 'SET_PRODUCTS', payload: productsData.data});
-    }
-  }, [productsData, dispatch]); //this will run when the productsData changes, and it will set the products state to the data we received
+const Home:React.FC = () => {
+  const selectedCategory = useSelector((state: RootState) => state.category.selectedCategory); //this will get the selected category from the redux store, we will use this to filter the products
 
-  const { data: categories } = useQuery({
-    queryKey: ['categoreis'],
-    queryFn: fetchCategories,
-  });
-  console.log(categories);
+  //using React Query to fetch products by category or all products if no category is selected
+  const { data: products, isLoading, error } = useQuery<Product[]>({
+    queryKey: selectedCategory
+      ? ['products', selectedCategory]
+      : ['products', 'all'],
+    queryFn: async () => {
+      if (selectedCategory) {
+        const result = await fetchProductsByCategory(selectedCategory);
+        console.log("✅ category products returned:", result);
+        return result;
+      } else {
+        const result = await fetchProducts();
+        console.log("✅ all products returned:", result);
+        return result;
+      }
+    },
+});
 
-  //create a function to filter the products based on the selected category
-  const getFilteredProducts = () => {
-    if (selectedCategory) {
-      return products.filter((product: Product) => product.category === selectedCategory);
-    } else {
-      return products;
-    } 
+
+  //console.log('selectedCategory from Redux:', selectedCategory);
+  if (isLoading) return <p>Loading products...</p>
+  if (error) {
+    console.error('Error fetching products:', error);
+    return <p>Error fetching products</p>
   }
 
-  const productsToDisplay = getFilteredProducts(); //this will return the products that match the selected category, or all products if no category is selected
-  // console.log(productsToDisplay);
-  return (
-    <div className="home-container">
-      <div>
-        {/* for the categories selector here to work, we will need to set the selectedCategory state in the context to reflect the selected category */}
-        <select
-          onChange={(e) => 
-            dispatch({type: "SET_SELECTED_CATEGORY", payload: e.target.value}) 
-          }
-          value = {selectedCategory} // this will set the selected category to the selected category the global state so if you clear it with the button below, the selection will show it set back to 'all categories'
-        >
-          <option value=''>All Categories</option>
-          {categories?.data.map((category: Category) => (
-            <option value={category} key={category}>{category}</option>  //always have a key when mapping over data
-          ))}
-        </select>
-        <button
-          onClick = {() => {
-            dispatch({type: "SET_SELECTED_CATEGORY", payload: ''});
-          }}
-        >
-          Clear Filter
-          </button>
-      </div>
-      <div className="container">
-        {productsToDisplay.map((product: Product) => (
-          <ProductCard product={product} key={product.id} />  
-          //we are passing the product as a prop to the ProductCard component
+// Debugging logs to check the selected category and query key
+console.log("🟡 Redux selectedCategory:", selectedCategory);
+console.log("🧪 Query key:", selectedCategory ? ['products', selectedCategory] : ['products', 'all']);
+console.log("📦 Products:", products);
+
+return (
+    <Container className="home-container">
+      <Row  xs={1} sm={2} md={3} lg={4} className="g-4">
+        {products?.map((product: Product) => (
+          <Col key={product.id}>
+            <ProductCard product={product} />
+          </Col>
         ))}
-      </div>
-    </div>
-  )
+      </Row>
+    </Container>
+  );
 }
 
 export default Home

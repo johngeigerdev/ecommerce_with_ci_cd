@@ -1,18 +1,4 @@
 .product-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 1rem;
-    margin: 1rem;
-    width: 40rem;
-    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-    border-radius: 1rem;
-    background-color: white;
-    gap: 1rem; /* Add space/gap between elements */
-}
-
-.product-image {
-    width: 10rem;
-    height: 10rem;
+    max-height: 400px;
+    width: auto;
 }

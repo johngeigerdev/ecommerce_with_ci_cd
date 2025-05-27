@@ -1,10 +1,25 @@
-import axios, { type AxiosResponse } from 'axios'; //axiosResponse creates the interface for the response for us so we don't have to create manually
+import axios from 'axios'; //axiosResponse creates the interface for the response for us so we don't have to create manually
 import { type Product } from '../types/types';
 import { type Category } from '../types/types';
 
-const apiClient = axios.create({
+const api = axios.create({
     baseURL: 'https://fakestoreapi.com'
 })
 
-export const fetchProducts = (): Promise<AxiosResponse<Product[]>> => apiClient.get<Product[]>('/products')  //could do this just using fetch instead of axios
-export const fetchCategories = (): Promise<AxiosResponse<Category[]>> => apiClient.get<Category[]>('/products/categories') //this will fetch the categories from the api
+//fetch all products
+export const fetchProducts = async (): Promise<Product[]> => {
+    const res = await api.get<Product[]>('/products');
+    return res.data;
+};
+
+//fetch products by category
+export const fetchProductsByCategory = async (category: string): Promise<Product[]> => {
+    const res = await api.get<Product[]>(`/products/category/${category}`);
+    return res.data;
+};
+
+//fetch all categories
+export const fetchCategories = async (): Promise<Category[]> => {
+    const res = await api.get<Category[]>('/products/categories');
+    return res.data;
+};

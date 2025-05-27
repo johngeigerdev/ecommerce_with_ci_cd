@@ -1,6 +1,5 @@
 import { createContext, useContext, type ReactNode, useReducer } from "react";
 import type { Product } from "../types/types";
-import { type Category } from "../types/types";
 
 //Actions are instructions to change the state
 //we must define the type of action
