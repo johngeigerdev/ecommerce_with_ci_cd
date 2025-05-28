@@ -45,8 +45,8 @@ console.log("🧪 Query key:", selectedCategory ? ['products', selectedCategory]
 console.log("📦 Products:", products);
 
 return (
-    <Container className="home-container">
-      <Row  xs={1} sm={2} md={3} lg={4} className="g-4">
+    <Container fluid className="home-container py-5">
+      <Row  sm={1} md={2} lg={4} xl={4}className="g-5 px-3 justify-content-center">
         {products?.map((product: Product) => (
           <Col key={product.id}>
             <ProductCard product={product} />

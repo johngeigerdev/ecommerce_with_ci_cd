@@ -5,8 +5,6 @@ import { useState } from 'react'
 import { useDispatch } from 'react-redux';
 import { addToCart } from '../../context/CartSlice';
 import { Card, Button } from 'react-bootstrap';
-import './ProductCard.css';
-
 
 interface Props {
   product: Product; //defining the type of the product prop that we will receive in this component
@@ -22,15 +20,24 @@ const ProductCard:React.FC<Props> = ({ product }) => {
   }
 
   return (
-    <Card className="mb-4 product-card">
-        <Card.Img className="product-image mt-4" src={product.image} alt={product.title} style={{ height: '200px', objectFit: 'contain'}}/>
-        <Card.Body>
-          <Card.Title>{product.title}</Card.Title>
-          <Card.Text>{product.category}</Card.Text>
-          <Card.Text>${product.price}</Card.Text>
-          <Rating style={{ maxWidth: 200 }} value={product.rating.rate} readOnly />
+    <Card className="h-100 shadow-sm d-flex flex-column justify-content-between product-card">
+        <Card.Img 
+          variant="top"
+          src={product.image}
+          style={{ height: '200px', objectFit: 'contain'}}
+          alt={product.title} 
+          className="my-4 mx-auto"
+        />
+        <Card.Body className="d-flex flex-column justify-content-between">
+          <Card.Title className="text-center">{product.title}</Card.Title>
+          <Rating className="my-3" style={{ maxWidth: 200 }} value={product.rating.rate} readOnly />
           <Card.Text>{product.description}</Card.Text>
-          <Button className='btn btn-primary'>Add To Cart</Button>
+          <div className="mt-auto text-center">
+            <div className="fw-bold text-success fs-5 mb-2">
+              ${product.price.toFixed(2)}  {/* this formats the price to 2 decimal places */}
+            </div>
+            <Button className='btn btn-primary px-4'>Add To Cart</Button>
+          </div>
         </Card.Body>
     </Card>
     
