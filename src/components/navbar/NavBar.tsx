@@ -29,7 +29,7 @@ const NavBar: React.FC = () => {
         <Navbar.Brand as={Link} to="/">FakeStore</Navbar.Brand>
         <Nav className="me-auto">
           <Nav.Link as={Link} to="/">Home</Nav.Link>
-          <Nav.Link as={Link} to="/cart">
+          <Nav.Link as={Link} to="./pages/cart">
             Cart <Badge bg="light" text="dark">{cartCount}</Badge>
           </Nav.Link>
         </Nav>

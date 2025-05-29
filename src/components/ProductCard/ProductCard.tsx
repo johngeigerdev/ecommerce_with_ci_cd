@@ -36,7 +36,7 @@ const ProductCard:React.FC<Props> = ({ product }) => {
             <div className="fw-bold text-success fs-5 mb-2">
               ${product.price.toFixed(2)}  {/* this formats the price to 2 decimal places */}
             </div>
-            <Button className='btn btn-primary px-4'>Add To Cart</Button>
+            <Button onClick = {handleAddToCart} className='btn btn-primary px-4'>Add To Cart</Button>
           </div>
         </Card.Body>
     </Card>
