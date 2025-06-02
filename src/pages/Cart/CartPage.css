@@ -5,3 +5,13 @@ body {
 .cart-container {
     background-color: teal;
 }
+#checkout-box {
+    border: 5px solid blue;
+    border-radius: 1rem;
+    background-color: rgb(81, 207, 207);
+}
+#checkout-btn:hover {
+    background-color: yellow;
+    color: green;
+    font-weight: bold;
+}

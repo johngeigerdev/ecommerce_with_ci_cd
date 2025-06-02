@@ -1,8 +1,9 @@
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../../store/store';
-import { removeFromCart } from '../../context/CartSlice';
+import { removeFromCart, incrementQuantity, decrementQuantity } from '../../context/CartSlice';
 import { Container, Row, Col, Card, Button } from 'react-bootstrap';
 import './CartPage.css';
+import { Link } from 'react-router-dom';
 
 const CartPage: React.FC = () => {
     const dispatch = useDispatch();
@@ -11,6 +12,13 @@ const CartPage: React.FC = () => {
     const handleRemove = (id: number) => {
         dispatch(removeFromCart(id));
     }
+    const handleIncrement = (id: number) => {
+        dispatch(incrementQuantity(id));
+    }
+    const handleDecrement = (id: number) => {
+        dispatch(decrementQuantity(id));
+    }
+
 
     const total = cartItems.reduce(
         (sum, item) => sum + item.price * item.quantity, 0
@@ -48,7 +56,12 @@ const CartPage: React.FC = () => {
                                             <Col className="d-flex flex-column justify-content-center">
                                                 <h5>{item.title}</h5>
                                                 <p>Price: ${item.price.toFixed(2)}</p>
-                                                <p>Quantity: {item.quantity}</p>
+                                                <div className="d-flex align-items-center justify-conten-space-around">
+                                                    <Button onClick = {() => handleDecrement(item.id)}>-</Button>
+                                                    <p className="text-center">Quantity: {item.quantity}</p>
+                                                    <Button onClick={() => handleIncrement(item.id)}>+</Button>
+                                                </div>
+                                                
                                             </Col>
                                             <Col className="d-flex align-items-center justify-content-end">
                                                 <Button
@@ -65,8 +78,19 @@ const CartPage: React.FC = () => {
                         </Row>
                     ))            
                     }
-                    <Row>
-                        <Col className="text-end">
+                    <Row className="d-flex justify-content-center align-items-center mb-5 p-3 shadow-sm" id="checkout-box">
+                        <Col className="text-center">
+                            <Link to="/checkout">
+                                <Button 
+                                variant="primary" 
+                                size="lg" 
+                                className="px-5 py-3 fw-bold shadow-sm"
+                                id="checkout-btn">
+                                    Proceed to Checkout
+                                </Button>
+                            </Link>
+                        </Col>
+                        <Col className="text-end fw-bold">
                             <h4>Total: ${total.toFixed(2)}</h4>
                         </Col>
                     </Row>
