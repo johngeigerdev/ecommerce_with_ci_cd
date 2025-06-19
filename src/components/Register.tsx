@@ -1,13 +1,19 @@
 import { useState, type FormEvent } from 'react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../firebaseConfig';
-import { Form, Button } from 'react-bootstrap';
+import { getFirestore, doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { auth, db } from '../firebaseConfig';
+import { Form, Button, Alert } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+
 
 const Register = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const [success, setSuccess] = useState<boolean>(false);
+
 
   const handleRegister = async (e: FormEvent) => {
     e.preventDefault();
@@ -27,10 +33,32 @@ const Register = () => {
     }
 
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      alert("Registration successful!");
+        //password length validation
+        if (password.length < 8) {
+            setError("Password must be at least 8 characters long.");
+            return;
+        }
+        // Create user with email and password
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        //Add user data to Firestore
+        await setDoc(doc(db, 'users', user.uid), {
+            email: user.email,
+            createdAt: serverTimestamp(),
+        })
+
+        setSuccess(true);
+        setError(null);
+        setTimeout(() => {
+            navigate('/login'); // Redirect to login page after successful registration
+        }, 2000); // 2 seconds delay before redirecting
     } catch (err: any) {
-      setError(err.message);
+        if (err.code === 'auth/email-already-in-use') {
+            setError("Email is already in use. Please use a different email.");
+        } else {
+            setError(err.message);
+        }
     }
   };
 
@@ -40,25 +68,45 @@ const Register = () => {
             type = "email"
             placeholder = "Email"
             value={email}
-            onChange = {(e) => setEmail(e.target.value)}
-            required  // if pw's don't match, it will not submit the form
+            onChange={(e) => {
+                setEmail(e.target.value);
+                setError(null); // resets the error when user types
+            }}
+            required 
         />
         <input
             type = "password"
             placeholder = "Password"
             value={password}
-            onChange = {(e) => setPassword(e.target.value)}
+            onChange = {(e) => {
+                setPassword(e.target.value)
+                setError(null); // resets the error when user types
+            }}
             required
+            minLength={8} // Ensures password is at least 8 characters long
         />
         <input 
             type="password"
             placeholder="Confirm Password"
             value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
+            onChange={(e) => {
+                setConfirmPassword(e.target.value);
+                setError(null); // resets the error when user types
+            }}
             required
         />
-        <Button type="submit" className="btn btn-primary">Register</Button>
-        {error && <p>{error}</p>}
+        <Button type="submit" className="btn btn-primary" disabled={success}>Register</Button>
+        {error && (
+            <Alert variant="danger" className="mt-3">
+                {error}
+            </Alert>
+            )}
+
+        {success && (
+            <Alert variant="success" className="mt-3">
+                Registration successful! Redirecting to login...
+            </Alert>
+        )}
     </Form>
   );
 };

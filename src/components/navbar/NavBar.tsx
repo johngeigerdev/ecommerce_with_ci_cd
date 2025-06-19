@@ -6,9 +6,31 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { RootState } from '../../store/store';
 import { setSelectedCategory } from '../../../src/context/CategorySlice.ts';
 import { fetchCategories } from '../../api/api';
+import { useEffect, useState } from 'react';
+import { onAuthStateChanged, type User, signOut } from 'firebase/auth';
+import { auth } from '../../firebaseConfig';
+
 
 const NavBar: React.FC = () => {
   const dispatch = useDispatch();
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+    });
+    return () => unsubscribe(); // Cleanup subscription on unmount
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      alert("Logout successful!");
+    } catch (err: any) {
+      console.error("Logout error:", err.message);
+      alert("Logout failed. Please try again.");
+    }
+  }
 
   const selectedCategory = useSelector((state: RootState) => state.category.selectedCategory);
   const cartItems = useSelector((state: RootState) => state.cart.items);
@@ -29,6 +51,12 @@ const NavBar: React.FC = () => {
         <Navbar.Brand as={Link} to="/">FakeStore</Navbar.Brand>
         <Nav className="me-auto">
           <Nav.Link as={Link} to="/">Home</Nav.Link>
+          <Nav.Link as={Link} to="/register">Register</Nav.Link>
+          {currentUser ? (
+            <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
+          ) : (
+            <Nav.Link as={Link} to="/login">Login</Nav.Link>
+          )}
           <Nav.Link as={Link} to="/cart">
             Cart <Badge bg="light" text="dark">{cartCount}</Badge>
           </Nav.Link>
