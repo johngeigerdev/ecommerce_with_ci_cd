@@ -5,14 +5,16 @@ import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import type { RootState } from '../../store/store';
 import { setSelectedCategory } from '../../../src/context/CategorySlice.ts';
-import { fetchCategories } from '../../api/api';
 import { useEffect, useState } from 'react';
 import { onAuthStateChanged, type User, signOut } from 'firebase/auth';
-import { auth } from '../../firebaseConfig';
+import { auth } from '../../firebase/firebaseConfig.ts';
+import { useNavigate } from 'react-router-dom';
+import { fetchCategories, fetchProductsFromFirestore } from '../../firebase/firebaseHelpers.ts';
 
 
 const NavBar: React.FC = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState<User | null>(null);
 
   useEffect(() => {
@@ -26,6 +28,7 @@ const NavBar: React.FC = () => {
     try {
       await signOut(auth);
       alert("Logout successful!");
+      navigate("/"); // Redirect to home page after successful logout
     } catch (err: any) {
       console.error("Logout error:", err.message);
       alert("Logout failed. Please try again.");
@@ -51,16 +54,33 @@ const NavBar: React.FC = () => {
         <Navbar.Brand as={Link} to="/">FakeStore</Navbar.Brand>
         <Nav className="me-auto">
           <Nav.Link as={Link} to="/">Home</Nav.Link>
-          <Nav.Link as={Link} to="/register">Register</Nav.Link>
           {currentUser ? (
-            <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
+            <>
+              <Nav.Link
+                onClick={handleLogout}
+              >
+                Logout
+              </Nav.Link>
+              <Nav.Link as={Link} to="/profile">Profile</Nav.Link>
+            </>
           ) : (
-            <Nav.Link as={Link} to="/login">Login</Nav.Link>
+            <>
+              <Nav.Link as={Link} to="/login">Login</Nav.Link>
+              <Nav.Link as={Link} to="/register">Register</Nav.Link>
+            </>
           )}
+          {/* hide the 'Register' link if user is logged  */}
           <Nav.Link as={Link} to="/cart">
             Cart <Badge bg="light" text="dark">{cartCount}</Badge>
           </Nav.Link>
+          {/* show 'Welcome' message if user is logged in */}
+          { currentUser && (
+            <span className="text-light my-auto ms-3">
+              Welcome, <strong>{currentUser.email}</strong>!
+            </span>
+          )}
         </Nav>
+
         <Form.Select
           onChange={handleCategoryChange}
           value={selectedCategory}

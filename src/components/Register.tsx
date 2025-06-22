@@ -1,22 +1,27 @@
 import { useState, type FormEvent } from 'react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { getFirestore, doc, setDoc, serverTimestamp } from 'firebase/firestore';
-import { auth, db } from '../firebaseConfig';
+import { auth, db } from '../firebase/firebaseConfig';
 import { Form, Button, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
 
 const Register = () => {
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [confirmPassword, setConfirmPassword] = useState<string>("");
-  const [error, setError] = useState<string | null>(null);
-  const navigate = useNavigate();
-  const [success, setSuccess] = useState<boolean>(false);
+    const [email, setEmail] = useState<string>("");
+    const [password, setPassword] = useState<string>("");
+    const [name, setName] = useState<string>("");
+    const [streetAddress, setStreetAddress] = useState<string>("");
+    const [city, setCity] = useState<string>("");
+    const [state, setState] = useState<string>("");
+    const [zipCode, setZipCode] = useState<string>("");
+    const [confirmPassword, setConfirmPassword] = useState<string>("");
+    const [error, setError] = useState<string | null>(null);
+    const navigate = useNavigate();
+    const [success, setSuccess] = useState<boolean>(false);
 
 
-  const handleRegister = async (e: FormEvent) => {
-    e.preventDefault();
+    const handleRegister = async (e: FormEvent) => {
+        e.preventDefault();
 
     const isValidEmail = (email: string): boolean => {
         const emailRegexCheck = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -45,6 +50,11 @@ const Register = () => {
         //Add user data to Firestore
         await setDoc(doc(db, 'users', user.uid), {
             email: user.email,
+            name: name,
+            streetAddress: streetAddress,
+            city: city,
+            state: state,
+            zipCode: zipCode,
             createdAt: serverTimestamp(),
         })
 
@@ -65,8 +75,18 @@ const Register = () => {
   return (
     <Form onSubmit={handleRegister} className="register-form">
         <input
-            type = "email"
-            placeholder = "Email"
+            type="text"
+            placeholder="Name"
+            value={name}
+            onChange = {(e) => {
+                setName(e.target.value);
+                setError(null); 
+            }}
+            required
+        />
+        <input
+            type="email"
+            placeholder="Email"
             value={email}
             onChange={(e) => {
                 setEmail(e.target.value);
@@ -94,6 +114,42 @@ const Register = () => {
                 setError(null); // resets the error when user types
             }}
             required
+        />
+        <input
+            type="text"
+            placeholder="street address"
+            value={streetAddress}
+            onChange={(e) => {
+                setStreetAddress(e.target.value);
+                setError(null);
+            }}
+        />
+        <input
+            type="text"
+            placeholder="City"
+            value={city}
+            onChange={(e) => {
+                setCity(e.target.value);
+                setError(null);
+            }}
+        />
+        <input
+            type="text"
+            placeholder="State"
+            value={state}
+            onChange={(e) => {
+                setState(e.target.value);
+                setError(null);
+            }}
+        />
+        <input
+            type="text"
+            placeholder="Zip Code"
+            value={zipCode}
+            onChange={(e) => {
+                setZipCode(e.target.value);
+                setError(null);
+            }}
         />
         <Button type="submit" className="btn btn-primary" disabled={success}>Register</Button>
         {error && (
