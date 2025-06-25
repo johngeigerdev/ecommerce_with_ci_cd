@@ -56,8 +56,8 @@ const CheckoutPage: React.FC = () => {
                 city: formData.city ?? '',
                 zip: formData.zip ?? '',
                 country: formData.country ?? '',
-        }
-    };
+            }
+        };
 
         try {
             await addDoc(collection(db, 'orders'), orderData);
