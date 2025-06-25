@@ -13,6 +13,9 @@ import { onAuthStateChanged, type User } from "firebase/auth";
 //import ImportProducts from './api/importProducts';
 import AddProduct from './pages/AddProduct';
 import useAdminCheck from './custom_hooks/useAdminCheck';
+import AdminProductsPage from './pages/AdminProductsPage';
+import EditProductPage from './pages/EditProductPage';
+import OrdersPage from './pages/Orders';
 
 
 function App() {
@@ -48,12 +51,23 @@ function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/cart" element={<CartPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
-            <Route path="/add-product" element={
+            <Route path="/orders" element={<OrdersPage />} />
+            <Route path="/admin/add-product" element={
                 <AdminRoute>
                   <AddProduct />
                 </AdminRoute>
               }
             />
+            <Route path="/admin/products" element={
+              <AdminRoute>
+                  <AdminProductsPage /> 
+              </AdminRoute>
+            } />
+            <Route path="/admin/edit/:id" element={
+              <AdminRoute>
+                  <EditProductPage /> 
+              </AdminRoute>
+            } />
             <Route path="/add-product" element={<AddProduct />} />
             {/* This route is for importing products from the fakestoreapi, it was a one time use, when going to the page, the script in the 
             component imports the products to Firestore*/}

@@ -147,6 +147,8 @@ const Profile = () => {
                 </Form.Group>
                 <Button variant="primary mt-3 me-2" onClick={handleUpdate}>Update Profile</Button>
                 <Button variant="danger" className="mt-3" onClick={handleDeleteAccount}>Delete My Account</Button>
+                <br />
+                <Button variant="success" className="mt-3" onClick={() => navigate('/orders')}>Past Orders</Button>
             </Form>
 
             {successMsg && <Alert variant="success" className="mt-3">{successMsg}</Alert>}

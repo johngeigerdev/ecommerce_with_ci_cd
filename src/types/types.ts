@@ -8,6 +8,8 @@ export interface Product {
     description: string;
     category: string;
     image: string;  //the link for an image will always be stored as a string
+    imageUrl: string;
+    createdAt?: any //can be a timestamp or a string
     rating: {
         rate: number;
         count: number;

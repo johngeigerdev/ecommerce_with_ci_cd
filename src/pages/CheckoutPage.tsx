@@ -4,15 +4,22 @@ import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../../src/store/store.ts';
 import { clearCart } from '../context/CartSlice.ts';
 import { useNavigate } from 'react-router-dom';
-
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from '../firebase/firebaseConfig';
+import { auth } from '../firebase/firebaseConfig';
 
 const CheckoutPage: React.FC = () => {
     const dispatch = useDispatch();
     const navigate= useNavigate();
     const cartItems = useSelector((state: RootState) => state.cart.items);
     const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    //the .reduce() method is a javascript array method that takes an array and combines all the elements into a single value, here it is adding their value up. 
-
+    const sanitizedItems = cartItems.map(item => ({
+        id: item.id ?? '',
+        title: item.title ?? 'Untitled',
+        price: item.price ?? 0,
+        quantity: item.quantity ?? 1,
+        image: item.image ?? item.imageUrl ?? '',
+    }));
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -31,12 +38,36 @@ const CheckoutPage: React.FC = () => {
     };
 
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        console.log('Order Submitted:', formData, cartItems);
-        alert('Thank you for your order!');
-        dispatch(clearCart());
-        navigate('/');  //will navigate back to the home page after the alert and it clears the cart. 
+    const handleOrderSubmit = async () => {
+        const user = auth.currentUser;
+        if (!user) {
+            alert('You must be logged in to place an order.');
+            return;
+        }
+
+        const orderData = {
+            userId: user.uid,
+            items: sanitizedItems,
+            total,
+            createdAt: serverTimestamp(),
+            shipping: {
+                name: formData.name ?? '',
+                address: formData.address ?? '',
+                city: formData.city ?? '',
+                zip: formData.zip ?? '',
+                country: formData.country ?? '',
+        }
+    };
+
+        try {
+            await addDoc(collection(db, 'orders'), orderData);
+            dispatch(clearCart()); // Clear cart after order is placed using Redux action
+            alert('Order placed successfully!');
+            navigate('/orders'); // Redirect to orders page
+        } catch (err) {
+            console.error('Error placing order: ', err);
+            alert('Failed to place order. Please try again.');
+        }
     };
 
     return (
@@ -44,7 +75,10 @@ const CheckoutPage: React.FC = () => {
             <Row>
                 {/* Shipping info form */}
                 <Col md={6}>
-                    <Form onSubmit={handleSubmit}>
+                    <Form onSubmit={(e) => {
+                        e.preventDefault();
+                        handleOrderSubmit();
+                    }}>
                         <h3>Shipping Information</h3>
                         {/* the below line is passing the formData object to the Form component, so that it can be used to loop through and populate the form fields */}
                         {['name', 'email', 'address', 'city', 'zip', 'country'].map(field => (

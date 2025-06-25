@@ -16,7 +16,11 @@ const ProductCard:React.FC<Props> = ({ product }) => {
   const [rating, setRating] = useState(0)
   const dispatch = useDispatch();
   const handleAddToCart = () => {
-    dispatch(addToCart(product));
+    const productToCart = {
+      ...product,
+      createdAt: product.createdAt?.toDate().toISOString() ?? null  // the .toISOString is to convert the date to a string format before pushing to Redux
+    };
+    dispatch(addToCart(productToCart));
   }
 
   console.log("rating data:", product.rating);

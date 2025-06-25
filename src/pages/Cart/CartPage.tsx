@@ -48,7 +48,7 @@ const CartPage: React.FC = () => {
                                         <Row className="mb-3 w-100">
                                             <Col className="d-flex align-items-center justify-content-center">
                                                 <img
-                                                    src={item.image}
+                                                    src={item.image || item.imageUrl}
                                                     alt={item.title}
                                                     style={{width: '10rem', height: '10rem', objectFit: 'contain'}}
                                                 />

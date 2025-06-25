@@ -9,7 +9,8 @@ import { useEffect, useState } from 'react';
 import { onAuthStateChanged, type User, signOut } from 'firebase/auth';
 import { auth } from '../../firebase/firebaseConfig.ts';
 import { useNavigate } from 'react-router-dom';
-import { fetchCategories, fetchProductsFromFirestore } from '../../firebase/firebaseHelpers.ts';
+import { fetchCategories } from '../../firebase/firebaseHelpers.ts';
+import useAdminCheck from '../../custom_hooks/useAdminCheck.ts';
 
 
 const NavBar: React.FC = () => {
@@ -38,6 +39,7 @@ const NavBar: React.FC = () => {
   const selectedCategory = useSelector((state: RootState) => state.category.selectedCategory);
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
+  const isAdmin = useAdminCheck();
 
   const { data: categories, isLoading, error } = useQuery({
     queryKey: ['categories'],
@@ -68,6 +70,9 @@ const NavBar: React.FC = () => {
               <Nav.Link as={Link} to="/login">Login</Nav.Link>
               <Nav.Link as={Link} to="/register">Register</Nav.Link>
             </>
+          )}
+          {isAdmin && (
+            <Nav.Link as={Link} to="/admin/products">Manage Products</Nav.Link>
           )}
           {/* hide the 'Register' link if user is logged  */}
           <Nav.Link as={Link} to="/cart">
