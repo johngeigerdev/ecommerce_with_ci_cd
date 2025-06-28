@@ -34,15 +34,6 @@ const Login = () => {
         }
     };
 
-    const handleLogout = async () => {
-        try {
-            await signOut(auth);
-            alert("Logout successful!");
-        } catch (err: any) {
-            console.error("Logout error:", err.message);
-        }
-    };
-
     return (
             <Form onSubmit={handleLogin} className="login-form">
                 <input

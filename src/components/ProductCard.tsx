@@ -1,9 +1,8 @@
 import React from 'react'
-import { useState } from 'react';
-import type { Product } from '../../types/types'
+import type { Product } from '../types/types'
 import { Rating } from '@smastrom/react-rating';
 import { useDispatch } from 'react-redux';
-import { addToCart } from '../../context/CartSlice';
+import { addToCart } from '../context/CartSlice';
 import { Card, Button } from 'react-bootstrap';
 
 interface Props {
@@ -13,7 +12,6 @@ interface Props {
 //below the {product: Product} is saying we will have the prop of 'product' and of type 'Product' which we defined in types.ts
 //this is a functional component, we are using the 'React.FC' type to define that this is a functional component
 const ProductCard:React.FC<Props> = ({ product }) => {
-  const [rating, setRating] = useState(0)
   const dispatch = useDispatch();
   const handleAddToCart = () => {
     const productToCart = {

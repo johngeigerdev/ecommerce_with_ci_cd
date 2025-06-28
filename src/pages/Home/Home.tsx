@@ -1,5 +1,5 @@
 import React from 'react';
-import ProductCard from '../../components/ProductCard/ProductCard';
+import ProductCard from '../../components/ProductCard';
 import './Home.css';
 import { useQuery } from '@tanstack/react-query';
 import { fetchProductsFromFirestore } from '../../firebase/firebaseHelpers';

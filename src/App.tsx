@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home/Home';
-import { QueryClientProvider, QueryClient, Query } from '@tanstack/react-query';
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import NavBar from './components/navbar/NavBar';
 import CheckoutPage from './pages/CheckoutPage';
 import CartPage from './pages/Cart/CartPage';
