@@ -1,5 +1,7 @@
 # React + TypeScript + Vite
 
+## Live Site
+[View the E-Commerce Store](https://ecommerce-with-ci-cd.vercel.app/)
 ![CI](https://github.com/johngeigerdev/ecommerce_with_ci_cd/badge.svg)
 
 
@@ -55,3 +57,5 @@ export default tseslint.config({
   },
 })
 ```
+
+<!-- vercel token: sx9zlqT48uVi1ZToD2WPhn25 -->
