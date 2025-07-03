@@ -1,5 +1,8 @@
 # React + TypeScript + Vite
 
+![CI](https://github.com/johngeigerdev/ecommerce_with_ci_cd/badge.svg)
+
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:
