@@ -36,6 +36,7 @@ describe('Cart Integration Test', () => {
 
     const button = screen.getByRole('button', { name: /add to cart/i });
 
+    //this is to to dispatch actions for testing purposes without actually updating the state
     await act(async () => {
       fireEvent.click(button);
     });

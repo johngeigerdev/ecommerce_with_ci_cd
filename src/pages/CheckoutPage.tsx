@@ -144,13 +144,14 @@ const CheckoutPage: React.FC = () => {
                 {/* Cart summary */}
                 <Col md={6} className="d-flex flex-column">
                     <h3>Order Summary</h3>
-                    {cartItems.map(item => (
+                    {sanitizedItems.map(item => (
                         <Card key={item.id} className="mb-3">
                             <Card.Body>
                                 <Row>
                                     <Col xs={4}>
                                         <img
-                                            src={item.image}
+                                            src={item.image || '/placeholder.jpg'}
+                                            alt = {item.title}
                                             style={{ width: '100%', objectFit: 'contain', maxHeight: '100px'}}
                                         />
                                     </Col>
